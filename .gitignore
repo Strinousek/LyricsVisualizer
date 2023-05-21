@@ -1,0 +1,7 @@
+/**/build
+/**/tsconfig.tsbuildinfo
+/**/.env
+/**/cache.json
+/**/lyrics
+/**/node_modules
+/**/package-lock.json
