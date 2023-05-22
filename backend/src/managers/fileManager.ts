@@ -8,7 +8,7 @@ import { CacheInterface, LyricsInterface } from "../utils/interfaces";
  * 
  * In case of an error, application is killed.  
 */
-const EnsureCacheFile = async () => {
+const EnsureCacheFile = async (): Promise<null | void> => {
     try {
         const path = "./cache.json";
         const canAccess = await fs.access(path, constants.F_OK).then(() => true).catch(() => false);
@@ -22,7 +22,7 @@ const EnsureCacheFile = async () => {
             };
             await fileHandle.writeFile(JSON.stringify(defaultCacheData));
             await fileHandle.close();
-            console.log("Cache file. succesfully created.")
+            console.log("Cache file. succesfully created.");
         }
     } catch {
         console.log("An error occured during cache file ensuring. Closing application...")
@@ -35,6 +35,10 @@ const EnsureCacheFile = async () => {
  * @returns `CacheInterface` or `null`
  */
 const GetCachedData = async (): Promise<CacheInterface | null> => {
+    const cacheFileExists = await EnsureCacheFile().then(() => true).catch(() => false);
+    if(cacheFileExists !== true)
+        return null;
+
     try {
         const path = "./cache.json";
         const fileHandle = await fs.open(path);
@@ -53,6 +57,10 @@ const GetCachedData = async (): Promise<CacheInterface | null> => {
  * @returns 
  */
 const SetCachedData = async (cacheData: CacheInterface): Promise<null | void> => {
+    const cacheFileExists = await EnsureCacheFile().then(() => true).catch(() => false);
+    if(cacheFileExists !== true)
+        return null;
+
     try {
         const path = "./cache.json";
         const fileHandle = await fs.open(path, "w");
@@ -111,14 +119,12 @@ const CreateLyricsFile = async (trackId: string, lyrics: LyricsInterface | strin
         const path = `./lyrics/${trackId}.json`;
         const parsedLyrics = typeof(lyrics) == "string" ? lyrics : JSON.stringify(lyrics);
         await fs.appendFile(path, parsedLyrics);
-
     } catch  {
         return null;
     }
 };
 
 EnsureLyricsFolder();
-EnsureCacheFile();
 
 export {
     GetLyricsFile,

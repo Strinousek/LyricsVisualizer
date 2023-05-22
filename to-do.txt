@@ -1,0 +1,6 @@
+/*
+	getcacheddata throws an error when cache is not present
+	ensurecachefile -> async promise -> return bool if exists 
+*/
+
+// save lyrics when retrieved from api to a file
